@@ -1,21 +1,27 @@
 use crate::deck::Deck;
+use crate::game_state::GameState;
 use crate::player::Player;
-use crate::game_state::Caravan;
 
 extern crate num;
 #[macro_use]
 extern crate num_derive;
 
 mod deck;
-mod player;
 mod game_state;
+mod player;
 
 fn main() {
     let mut stock = Deck::new();
 
-    let opponents_names = vec!["John"];
-   
-    let i = Caravan::new();
+    let mut game_state = GameState::new();
 
-    println!("{i}");
+    let mut player = Player::new();
+
+    let card = deck::Card::new(deck::Values::Jack, deck::Suits::Hearts);
+
+    println!("{}", player.status());
+
+    player.add_number_card(card, 1);
+
+    println!("{}", player.status());
 }

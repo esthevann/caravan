@@ -1,27 +1,24 @@
-use std::{default::Default, fmt::Display};
+use crate::player::{Player};
 
-#[derive(Default, Debug)]
-pub struct Caravan {
-    number: u8,
-    sold: bool,
+
+pub struct GameState {
+    players: Vec<Player>,
+    game_over: bool,
+    first_round: bool,
 }
 
-impl Caravan {
+impl GameState {
     pub fn new() -> Self {
-        Default::default()
+        let players = vec![Player::new(), Player::new()];
+        Self { players, game_over: false, first_round: true }
     }
 
-    fn add(&mut self, number: u8){
-        self.number += number;
+    pub fn status(&self) {
+        for (i, player) in self.players.iter().enumerate() {
+            println!("Player #{} Status: ", i + 1);
+            println!("{}", player.status());
+        }
     }
 
-    fn toggle(&mut self){
-        self.sold = !self.sold;
-    }
-}
 
-impl Display for Caravan {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "value: {}, sold: {}", self.number, self.sold)
-    }
 }

@@ -22,6 +22,12 @@ pub enum Values {
     King = 13,
 }
 
+impl Values {
+    pub fn is_face(&self) -> bool {
+        matches!(self, Values::Jack | Values::Queen | Values::King)
+    }
+}
+
 #[allow(dead_code)]
 #[derive(
     Debug, strum_macros::Display, Clone, FromPrimitive, PartialEq, Copy, PartialOrd, Eq, Ord,
@@ -54,7 +60,7 @@ impl fmt::Display for Card {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Deck(Vec<Card>);
 
 impl Deck {
@@ -82,7 +88,6 @@ impl Deck {
         self.clear();
         while deck_clone.len() > 0 {
             let index = rng.gen_range(0..deck_clone.len());
-            let card = deck_clone.get_mut(index).unwrap();
             self.push(deck_clone.remove(index));
         }
     }
