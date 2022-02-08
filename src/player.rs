@@ -57,7 +57,7 @@ impl Caravan {
         self.cards.push(card);
     }
 
-    pub fn remove(&mut self, card: usize) -> Card{
+    pub fn remove(&mut self, card: usize) -> Card {
         self.number -= self.cards[card].score();
         self.cards[card].attached.take();
         self.cards.remove(card)
@@ -71,22 +71,36 @@ impl Caravan {
         self.state = state;
     }
 
-    pub fn swap_state(&mut self){
+    pub fn swap_state(&mut self) {
         match self.state {
-            CaravanState::Any => {},
+            CaravanState::Any => {}
             CaravanState::Decreasing => {
                 self.state = CaravanState::Increasing;
-            },
+            }
             CaravanState::Increasing => {
                 self.state = CaravanState::Decreasing;
-            },
+            }
         }
+    }
+    pub fn clear(&mut self) {
+        for card in 0..self.cards.len() {
+            self.remove(card);
+        }
+        self.sold = Default::default();
+        self.state = Default::default();
     }
 }
 
 impl Display for Caravan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "number: {}, sold: {}, state: {}, cards: {}", self.number, self.sold, self.state, self.cards.len())
+        write!(
+            f,
+            "number: {}, sold: {}, state: {}, cards: {}",
+            self.number,
+            self.sold,
+            self.state,
+            self.cards.len()
+        )
     }
 }
 
@@ -96,7 +110,6 @@ pub enum CaravanState {
     Decreasing,
     Increasing,
 }
-
 
 impl Default for CaravanState {
     fn default() -> Self {

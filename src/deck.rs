@@ -45,23 +45,28 @@ pub struct Card {
     pub value: Values,
     pub suit: Suits,
     name: String,
-    pub attached: Box<Option<Vec<Card>>>
+    pub attached: Box<Option<Vec<Card>>>,
 }
 
 impl Card {
     pub fn new(value: Values, suit: Suits) -> Self {
         let name = format!("{} of {}", value, suit);
-        Self { value, suit, name, ..Default::default() }
+        Self {
+            value,
+            suit,
+            name,
+            ..Default::default()
+        }
     }
 
-    pub fn add_attached(&mut self, card: Card){
+    pub fn add_attached(&mut self, card: Card) {
         self.attached = Box::new(Some(vec![card]));
     }
     pub fn score(&self) -> u8 {
         let mut score = self.value as u8;
-        if let Some(att) = self.attached.as_deref(){
-            for card in att{
-                if card.value == Values::King{
+        if let Some(att) = self.attached.as_deref() {
+            for card in att {
+                if card.value == Values::King {
                     score *= 2;
                 }
             }
@@ -78,7 +83,12 @@ impl fmt::Display for Card {
 
 impl Default for Card {
     fn default() -> Self {
-        Self { value: Values::Ace, suit: Suits::Clubs, name: format!("{} of {}", Values::Ace, Suits::Clubs), attached: Box::new(None) }
+        Self {
+            value: Values::Ace,
+            suit: Suits::Clubs,
+            name: format!("{} of {}", Values::Ace, Suits::Clubs),
+            attached: Box::new(None),
+        }
     }
 }
 
