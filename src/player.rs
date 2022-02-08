@@ -1,15 +1,13 @@
-use std::fmt::{Display};
 use std::error;
-
+use std::fmt::Display;
 
 use rand::{self, Rng};
-
 
 use crate::deck::{Card, Deck, Values};
 
 #[derive(Debug, Clone)]
 pub struct Player {
-    caravans: Vec<Caravan>,
+    pub caravans: Vec<Caravan>,
     stock: Deck,
     hand: Deck,
 }
@@ -20,10 +18,14 @@ impl Player {
         let mut deck = Deck::new();
         let mut hand = Vec::new();
         deck.shuffle();
-        for i in 0..8{
+        for i in 0..8 {
             hand.push(deck.deal(i));
         }
-        Self { caravans, stock: deck, hand: Deck::from_slice(&hand) }
+        Self {
+            caravans,
+            stock: deck,
+            hand: Deck::from_slice(&hand),
+        }
     }
 
     pub fn status(&self) -> String {
@@ -35,50 +37,14 @@ impl Player {
         report.push_str(&format!("hand count: {}\n", self.hand.len()));
         report
     }
-
-    pub fn add_number_card(&mut self, card: Card, caravan_number: usize) -> Result<(), Box<dyn error::Error>>{
-        if card.value.is_face() {
-            return Err("Can't add a face card".into());
-        }; 
-        match self.caravans[caravan_number].cards.last() {
-            Some(last_card) => {
-                match self.caravans[caravan_number].state {
-                    CaravanState::Any => {
-                        self.caravans[caravan_number].add(card.value as u8);
-                        Ok(())
-                    },
-                    CaravanState::Decreasing => {
-                        if last_card.value.gt(&card.value){
-                            self.caravans[caravan_number].add(card.value as u8);
-                            Ok(())
-                        } else {
-                            Err("Card value doesn't match caravan state".into())
-                        }
-                    },
-                    CaravanState::Increasing => {
-                        if last_card.value.lt(&card.value){
-                            self.caravans[caravan_number].add(card.value as u8);
-                            Ok(())
-                        } else {
-                            Err("Card value doesn't match caravan state".into())
-                        }
-                    },
-                }
-            },
-            None => {
-                self.caravans[caravan_number].add(card.value as u8);
-                Ok(())
-             },
-        }
-    }
 }
 
 #[derive(Default, Debug, Clone)]
 pub struct Caravan {
-    number: u8,
-    sold: bool,
-    state: CaravanState,
-    cards: Vec<Card>,
+    pub number: u8,
+    pub sold: bool,
+    pub state: CaravanState,
+    pub cards: Vec<Card>,
 }
 
 impl Caravan {
@@ -86,33 +52,60 @@ impl Caravan {
         Default::default()
     }
 
-    fn add(&mut self, number: u8) {
-        self.number += number;
+    pub fn add(&mut self, card: Card) {
+        self.number += card.score();
+        self.cards.push(card);
+    }
+
+    pub fn remove(&mut self, card: usize) -> Card{
+        self.number -= self.cards[card].score();
+        self.cards[card].attached.take();
+        self.cards.remove(card)
     }
 
     fn toggle(&mut self) {
         self.sold = !self.sold;
     }
-    fn change_state(&mut self, state: CaravanState){
+
+    fn change_state(&mut self, state: CaravanState) {
         self.state = state;
+    }
+
+    pub fn swap_state(&mut self){
+        match self.state {
+            CaravanState::Any => {},
+            CaravanState::Decreasing => {
+                self.state = CaravanState::Increasing;
+            },
+            CaravanState::Increasing => {
+                self.state = CaravanState::Decreasing;
+            },
+        }
     }
 }
 
 impl Display for Caravan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "number: {}, sold: {}", self.number, self.sold)
+        write!(f, "number: {}, sold: {}, state: {}, cards: {}", self.number, self.sold, self.state, self.cards.len())
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum CaravanState {
     Any,
     Decreasing,
-    Increasing
+    Increasing,
 }
+
 
 impl Default for CaravanState {
     fn default() -> Self {
         Self::Any
     }
-} 
+}
+
+impl Display for CaravanState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}

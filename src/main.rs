@@ -1,3 +1,6 @@
+use deck::Card;
+use player::Caravan;
+
 use crate::deck::Deck;
 use crate::game_state::GameState;
 use crate::player::Player;
@@ -15,13 +18,22 @@ fn main() {
 
     let mut game_state = GameState::new();
 
-    let mut player = Player::new();
+    let card_ = deck::Card::new(deck::Values::King, deck::Suits::Clubs); 
+    let mut card = deck::Card::new(deck::Values::Ten, deck::Suits::Hearts);
+    let card2 = deck::Card::new(deck::Values::Eight, deck::Suits::Diamonds);
 
-    let card = deck::Card::new(deck::Values::Jack, deck::Suits::Hearts);
+    game_state.status();
 
-    println!("{}", player.status());
+    game_state.add_number_card(card, 0, 0).unwrap();
 
-    player.add_number_card(card, 1);
+    game_state.status(); 
 
-    println!("{}", player.status());
+    game_state.add_number_card(card2, 0, 0).unwrap();
+   
+    game_state.status();
+
+    game_state.add_face_card(card_, 0, 0, 1).unwrap();
+
+    game_state.status();
+
 }
