@@ -69,7 +69,11 @@ impl GameState {
                         self.players[player_number].caravans[caravan_number].add(card);
                         self.players[player_number].caravans[caravan_number].swap_state();
                         Ok(())
-                    } else {
+                    } else if last_card.value == Values::Queen && card.suit == last_card.suit{
+                        self.players[player_number].caravans[caravan_number].add(card);
+                        Ok(())
+                    }
+                    else {
                         Err("Card value doesn't match caravan state".into())
                     }
                 }
@@ -94,7 +98,7 @@ impl GameState {
     }
     pub fn add_face_card(
         &mut self,
-        card_played: Card,
+        mut card_played: Card,
         player_against: usize,
         caravan_number: usize,
         card_against: usize,
@@ -103,7 +107,7 @@ impl GameState {
             .cards
             .last()
         {
-            Some(_) => match card_played.value {
+            Some(last_card) => match  card_played.value {
                 Values::Jack => {
                     self.players[player_against].caravans[caravan_number].remove(card_against);
                     Ok(())
@@ -124,6 +128,14 @@ impl GameState {
                 _ => Err("Can't play number card".into()),
             },
             None => Err("Can't play face card as the first card".into()),
+        }
+    }
+
+    pub fn check_win(&mut self){
+        for (plr1, plr2) in self.players[0].caravans.iter().zip(self.players[1].caravans.iter()){
+            if plr1.number > 21{
+
+            }
         }
     }
 }

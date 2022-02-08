@@ -15,6 +15,8 @@ fn main() {
     let card_ = deck::Card::new(deck::Values::King, deck::Suits::Clubs);
     let mut card = deck::Card::new(deck::Values::Ten, deck::Suits::Hearts);
     let card2 = deck::Card::new(deck::Values::Eight, deck::Suits::Diamonds);
+    let card3 = deck::Card::new(deck::Values::Queen, deck::Suits::Diamonds);
+    let card4 = deck::Card::new(deck::Values::Three, deck::Suits::Diamonds);
 
     game_state.status();
 
@@ -28,5 +30,10 @@ fn main() {
 
     game_state.add_face_card(card_, 0, 0, 1).unwrap();
 
+    game_state.status();
+
+    game_state.add_face_card(card3, 0, 0, 1).unwrap();
+    game_state.status();
+    game_state.add_number_card(card4, 0, 0).unwrap();
     game_state.status();
 }
